@@ -1,0 +1,88 @@
+# EAG-Transformer Configuration
+
+# Model Architecture
+model:
+  name: "EAG-Transformer"
+  d_model: 256
+  num_layers: 6
+  num_heads: 8
+  d_k: 32
+  d_ff: 1024
+  dropout: 0.1
+  conv_kernel_size: 3
+  max_seq_length: 512
+
+# Data Augmentation
+augmentation:
+  method: "adasyn_ctgan"
+  adasyn:
+    alpha: 0.8  # Oversampling ratio
+    beta: 0.3   # Target balance ratio
+    k_neighbors: 5
+  ctgan:
+    epochs: 300
+    batch_size: 500
+    generator_dim: [256, 256]
+    discriminator_dim: [256, 256]
+    embedding_dim: 128
+
+# Training
+training:
+  batch_size: 256
+  num_epochs: 100
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  focal_loss_gamma: 2.0
+  early_stopping_patience: 15
+  gradient_clip: 1.0
+  
+  # Optimizer
+  optimizer: "adamw"
+  scheduler: "cosine"
+  warmup_epochs: 5
+
+# Data
+data:
+  dataset: "ciciot2023"  # or "ciciot_diad2024"
+  train_split: 0.70
+  val_split: 0.15
+  test_split: 0.15
+  num_workers: 4
+  pin_memory: true
+  
+  # Preprocessing
+  normalization: "minmax"  # minmax or standard
+  handle_missing: "drop"   # drop, mean, median
+  categorical_encoding: "label"  # label or onehot
+
+# Paths
+paths:
+  data_dir: "data/"
+  raw_data: "data/raw/"
+  processed_data: "data/processed/"
+  augmented_data: "data/augmented/"
+  checkpoints: "checkpoints/"
+  logs: "logs/"
+  results: "results/"
+
+# Logging
+logging:
+  use_tensorboard: true
+  use_wandb: false
+  log_interval: 100
+  save_interval: 1000
+  
+# Evaluation
+evaluation:
+  metrics: ["accuracy", "precision", "recall", "f1", "auc_roc", "fpr"]
+  save_confusion_matrix: true
+  save_roc_curves: true
+  
+# Hardware
+hardware:
+  device: "cuda"  # cuda or cpu
+  mixed_precision: true
+  num_gpus: 1
+
+# Random seed for reproducibility
+seed: 42
